@@ -1,6 +1,6 @@
 exports.nodeCheck = (data, srcLati, srcLongi, dstLati, dstLongi) => {
-    const obj = JSON.parse(data.toString());
-    let totalDistance = obj.features[0].properties.totalDistance;
+    let obj = data;
+    let totalDistance = obj["features"][0]["properties"]["totalDistance"];
     let safeNodeCount = 0;
     let node = []
     let maxLati
@@ -57,38 +57,47 @@ exports.nodeCheck = (data, srcLati, srcLongi, dstLati, dstLongi) => {
     }
 
     /* 경유지 좌표 탐색 */
-    for (let idx in obj.features){
-        if (obj.features[idx].geometry.type == "LineString"){
-            for(let idx2 in obj.features[idx].geometry.coordinates){
-                node.push([obj.features[idx].geometry.coordinates[idx2][0], obj.features[idx].geometry.coordinates[idx2][1]])
+    for (let idx in obj["features"]){
+        console.log(idx)
+        if (obj["features"][idx]["geometry"]["type"] == "LineString"){
+            console.log("OK!")
+            for(let idx2 in obj["features"][idx]["geometry"]["coordinates"]){
+                node.push([obj["features"][idx]["geometry"]["coordinates"][idx2][0], obj["features"][idx]["geometry"]["coordinates"][idx2][1]])
 
                 if(nodeCount > 0){
-                    console.log(getDistance(lastlat, lastlon, obj.features[idx].geometry.coordinates[idx2][1], obj.features[idx].geometry.coordinates[idx2][0]))
+                    //console.log(getDistance(lastlat, lastlon, obj.features[idx].geometry.coordinates[idx2][1], obj.features[idx].geometry.coordinates[idx2][0]))
 
                 }
                 nodeCount += 1;
-                lastlat = obj.features[idx].geometry.coordinates[idx2][1]
-                lastlon = obj.features[idx].geometry.coordinates[idx2][0]
+                lastlat = obj["features"][idx]["geometry"]["coordinates"][idx2][1]
+                lastlon = obj["features"][idx]["geometry"]["coordinates"][idx2][0]
 
                 /* 경도 최대최소 찾기 */
-                if(maxLongi < obj.features[idx].geometry.coordinates[idx2][0]){
-                    maxLongi = obj.features[idx].geometry.coordinates[idx2][0];
+                if(maxLongi < obj["features"][idx]["geometry"]["coordinates"][idx2][0]){
+                    maxLongi = obj["features"][idx]["geometry"]["coordinates"][idx2][0];
                 }
-                else if(minLongi > obj.features[idx].geometry.coordinates[idx2][0]){
-                    minLongi = obj.features[idx].geometry.coordinates[idx2][0];
+                else if(minLongi > obj["features"][idx]["geometry"]["coordinates"][idx2][0]){
+                    minLongi = obj["features"][idx]["geometry"]["coordinates"][idx2][0];
                 }
 
                 /* 위도 최대최소 찾기 */
-                if(maxLati < obj.features[idx].geometry.coordinates[idx2][1]){
-                    maxLati = obj.features[idx].geometry.coordinates[idx2][1];
+                if(maxLati < obj["features"][idx]["geometry"]["coordinates"][idx2][1]){
+                    maxLati = obj["features"][idx]["geometry"]["coordinates"][idx2][1];
                 }
-                else if(minLati > obj.features[idx].geometry.coordinates[idx2][1]){
-                    minLati = obj.features[idx].geometry.coordinates[idx2][1];
+                else if(minLati > obj["features"][idx]["geometry"]["coordinates"][idx2][1]){
+                    minLati = obj["features"][idx]["geometry"]["coordinates"][idx2][1];
                 }
             }
         }
     }
 
+    var validCount = parseInt(nodeCount / (safeNodeCount + 1))
+    var validNode = []
+
+    for(let i = 1 ; i < safeNodeCount ; i++){
+        validNode.push(node[(i * validCount) - 1])
+    }
+    //return obj;
     return [[maxLati, minLati, maxLongi, minLongi], [totalDistance, nodeCount], node];
 }
 

@@ -2,7 +2,7 @@
 const express = require("express");
 
 /* route */
-const routing = require("./route/routing");
+let routing = require("./route/routing");
 
 /* 상수 */
 const app = express();

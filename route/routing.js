@@ -1,6 +1,8 @@
 /* dependency */
 const express = require("express");
 const http = require("https");
+//import axios from 'axios';
+const axios = require("axios");
 
 /* func */
 const distance = require("../func/distance");
@@ -13,23 +15,27 @@ const options = {
     path: '/tmap/routes/pedestrian?version=1&format=json',
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+    "Content-Type": "application/json",
       "appKey" : APPKEY
     }
 }
-let returnData ='';
+const headers = {
+    "Content-Type": "application/json",
+    "appKey" : APPKEY
+}
+let returnData
 
-const request = http.request(options, res => {
-    
+/*
+
+var request = http.request(options, res => {
     res.on('data', chunk => {
         returnData += chunk
     })
 
-    request.on('error', error => {
+    res.on('error', error => {
         returnData += error
     })
-});
-
+});*/
 
 router.get("/routing", (req, res) => {
     let srcLati = req.query.srcLati
@@ -39,8 +45,23 @@ router.get("/routing", (req, res) => {
     let pass_list = req.query.passList
     let data
 
+
+
+    if(typeof(srcLati) == "string"){
+        srcLati = parseFloat(srcLati)
+    }
+    if(typeof(dstLati) == "string"){
+        dstLati = parseFloat(dstLati)
+    }
+    if(typeof(srcLongti) == "string"){
+        srcLongti = parseFloat(srcLongti)
+    }
+    if(typeof(dstLongti) == "string"){
+        dstLongti = parseFloat(dstLongti)
+    }
+
     if(req.query.passList.length > 1 ){
-        data = JSON.stringify({
+        data = {
             startX : srcLongti,
             startY : srcLati,
             endX : dstLongti,
@@ -50,9 +71,9 @@ router.get("/routing", (req, res) => {
             startName : "출발지",
             endName : "도착지",
             passList: pass_list
-        });
+        }
     }else{
-        data = JSON.stringify({
+        data = {
             startX : srcLongti,
             startY : srcLati,
             endX : dstLongti,
@@ -61,20 +82,34 @@ router.get("/routing", (req, res) => {
             resCoordType : "WGS84GEO",
             startName : "출발지",
             endName : "도착지",
-        });
+        }
     }
 
 
-    request.data = data
-    request.write(data)
-    request.end()
-    //console.log(returnData)
-    let mmNode = distance.nodeCheck(returnData.toString(),srcLati, srcLongti, dstLati,dstLongti);
+    //request.data = data
+    //console.log(axiosReq(data, headers))
+    //request.write(data)
+    //request.end()
+    let returnData2 = axiosReq(data)
+    let mmNode = distance.nodeCheck(returnData, srcLati, srcLongti, dstLati,dstLongti);
     //const obj = JSON.parse(returnData.toString());
     //console.log(obj.features)
 
-    //res.send(returnData);
+    //res.send();
     res.send(mmNode);  
 });
+
+function axiosReq(data){
+
+    axios.defaults.headers.post = null
+    const promise = axios.post('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json', data, {headers})
+    
+    const dataPro = promise.then(res => {
+        returnData = res.data
+        return res.data
+    }).catch(function (error) {
+        return error;
+    });
+}
 
 module.exports = router;
