@@ -6,10 +6,11 @@ const axios = require("axios");
 
 /* func */
 const distance = require("../func/distance");
+const { response } = require("express");
 
 /* 상수 */
 const router = express.Router();
-const APPKEY = ""
+const APPKEY = "l7xx47ffd778fcc54f49baa6e2ea37859c5d"
 const options = {
     hostname: 'apis.openapi.sk.com',
     path: '/tmap/routes/pedestrian?version=1&format=json',
@@ -23,19 +24,7 @@ const headers = {
     "Content-Type": "application/json",
     "appKey" : APPKEY
 }
-let returnData
 
-/*
-
-var request = http.request(options, res => {
-    res.on('data', chunk => {
-        returnData += chunk
-    })
-
-    res.on('error', error => {
-        returnData += error
-    })
-});*/
 
 router.get("/routing", (req, res) => {
     let srcLati = req.query.srcLati
@@ -85,31 +74,14 @@ router.get("/routing", (req, res) => {
         }
     }
 
-
-    //request.data = data
-    //console.log(axiosReq(data, headers))
-    //request.write(data)
-    //request.end()
-    let returnData2 = axiosReq(data)
-    let mmNode = distance.nodeCheck(returnData, srcLati, srcLongti, dstLati,dstLongti);
-    //const obj = JSON.parse(returnData.toString());
-    //console.log(obj.features)
-
-    //res.send();
-    res.send(mmNode);  
+    axiosReq(data).then(returnData => { 
+        res.send(distance.nodeCheck(returnData.data, srcLati, srcLongti, dstLati,dstLongti))
+    })
 });
 
-function axiosReq(data){
-
-    axios.defaults.headers.post = null
-    const promise = axios.post('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json', data, {headers})
-    
-    const dataPro = promise.then(res => {
-        returnData = res.data
-        return res.data
-    }).catch(function (error) {
-        return error;
-    });
+const axiosReq = async (data) => {
+    const promise = await axios.post('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json', data, {headers})
+    return promise;
 }
 
 module.exports = router;
