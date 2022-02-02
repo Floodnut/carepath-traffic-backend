@@ -10,7 +10,7 @@ const { response } = require("express");
 
 /* 상수 */
 const router = express.Router();
-const APPKEY = "l7xx47ffd778fcc54f49baa6e2ea37859c5d"
+const APPKEY = ""
 const options = {
     hostname: 'apis.openapi.sk.com',
     path: '/tmap/routes/pedestrian?version=1&format=json',
