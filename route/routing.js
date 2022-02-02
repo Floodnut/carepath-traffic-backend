@@ -10,7 +10,7 @@ const { response } = require("express");
 
 /* 상수 */
 const router = express.Router();
-const APPKEY = ""
+const APPKEY = "l7xx47ffd778fcc54f49baa6e2ea37859c5d"
 const options = {
     hostname: 'apis.openapi.sk.com',
     path: '/tmap/routes/pedestrian?version=1&format=json',
@@ -73,10 +73,13 @@ router.get("/routing", (req, res) => {
             endName : "도착지",
         }
     }
-
-    axiosReq(data).then(returnData => { 
-        res.send(distance.nodeCheck(returnData.data, srcLati, srcLongti, dstLati,dstLongti))
-    })
+    try{
+        axiosReq(data).then(returnData => { 
+            res.send(distance.nodeCheck(returnData.data, srcLati, srcLongti, dstLati,dstLongti))
+        })
+    }catch(err){
+        res.send({data : err})
+    }
 });
 
 const axiosReq = async (data) => {
