@@ -7,10 +7,14 @@ const axios = require("axios");
 /* func */
 const distance = require("../func/distance");
 const { response } = require("express");
+const fs = require('fs');
 
 /* 상수 */
-const router = express.Router();
-const APPKEY = ""
+const router = express.Router()
+const kf = fs.readFileSync('./keys.json', 'utf8')
+const key = JSON.parse(kf)
+const APPKEY = key.tmapapi
+
 const options = {
     hostname: 'apis.openapi.sk.com',
     path: '/tmap/routes/pedestrian?version=1&format=json',

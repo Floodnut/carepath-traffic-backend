@@ -96,12 +96,18 @@ exports.nodeCheck = (data, srcLati, srcLongi, dstLati, dstLongi) => {
         }
 
         var validCount = parseInt(nodeCount / (safeNodeCount + 1))
-        var validNode = []
-
+        var validNode = new Array();
+        
+        
         for(let i = 1 ; i < safeNodeCount ; i++){
-            validNode.push(node[(i * validCount) - 1])
+            var jSon= new Object();
+            jSon.lo = node[(i * validCount) - 1][0]
+            jSon.la = node[(i * validCount) - 1][1]
+            validNode.push(jSon)
+            //validNode.push(node[(i * validCount) - 1])
         }
-        return { maxmin : [maxLati, minLati, maxLongi, minLongi], totaldis_count : [totalDistance, nodeCount], node : validNode};
+        //let JsonArray = JSON.stringify(validNode)
+        return { maxmin : [maxLati, minLati, maxLongi, minLongi], totaldis_count : [totalDistance, nodeCount],validNode};
     }catch(err){
         return { err }; 
     }
