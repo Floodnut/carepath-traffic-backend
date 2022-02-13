@@ -1,0 +1,14 @@
+version: "3.0"
+services: 
+  app:
+    build: .
+    container_name: Routing_Server_NodeJS
+    image: node:16-alpine3.11
+    ports: 
+      - "9001:9001"
+    environment:
+      NODE_ENV: localhost
+    volumes:
+      - /source:/source
+      - /source/node_modules
+    restart: always

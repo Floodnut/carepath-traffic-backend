@@ -1,19 +1,14 @@
 /* dependency */
 const express = require("express");
-const http = require("https");
-//import axios from 'axios';
 const axios = require("axios");
 
 /* func */
 const distance = require("../func/distance");
 const { response } = require("express");
-const fs = require('fs');
 
 /* 상수 */
 const router = express.Router()
-const kf = fs.readFileSync('./keys.json', 'utf8')
-const key = JSON.parse(kf)
-const APPKEY = key.tmapapi
+const APPKEY = ""
 
 const options = {
     hostname: 'apis.openapi.sk.com',
