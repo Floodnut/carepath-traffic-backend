@@ -62,16 +62,13 @@ exports.nodeCheck = (data, srcLati, srcLongi, dstLati, dstLongi) => {
 
         /* 경유지 좌표 탐색 */
         for (let idx in obj["features"]){
-            //console.log(idx)
             if (obj["features"][idx]["geometry"]["type"] == "LineString"){
-                //console.log("OK!")
                 for(let idx2 in obj["features"][idx]["geometry"]["coordinates"]){
                     node.push([obj["features"][idx]["geometry"]["coordinates"][idx2][0], obj["features"][idx]["geometry"]["coordinates"][idx2][1]])
                     
-                    if(nodeCount > 0){
-                        //console.log(getDistance(lastlat, lastlon, obj.features[idx].geometry.coordinates[idx2][1], obj.features[idx].geometry.coordinates[idx2][0]))
-
-                    }
+                    // if(nodeCount > 0){
+                    //     //console.log(getDistance(lastlat, lastlon, obj.features[idx].geometry.coordinates[idx2][1], obj.features[idx].geometry.coordinates[idx2][0]))
+                    // }
                     nodeCount += 1;
                     lastlat = obj["features"][idx]["geometry"]["coordinates"][idx2][1]
                     lastlon = obj["features"][idx]["geometry"]["coordinates"][idx2][0]
@@ -104,9 +101,7 @@ exports.nodeCheck = (data, srcLati, srcLongi, dstLati, dstLongi) => {
             jSon.lo = node[(i * validCount) - 1][0]
             jSon.la = node[(i * validCount) - 1][1]
             validNode.push(jSon)
-            //validNode.push(node[(i * validCount) - 1])
         }
-        //let JsonArray = JSON.stringify(validNode)
         return { maxmin : [maxLati, minLati, maxLongi, minLongi], totaldis_count : [totalDistance, nodeCount],validNode};
     }catch(err){
         return { err }; 

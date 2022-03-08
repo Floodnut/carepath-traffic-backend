@@ -76,7 +76,6 @@ const axiosReq = async (data) => {
         console.log(err)
         return err;
     }
-
 }
 
 module.exports = router;
