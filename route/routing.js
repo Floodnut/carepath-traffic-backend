@@ -4,7 +4,9 @@ const axios = require("axios");
 
 /* func */
 const distance = require("../func/distance");
+const traffic = require("../func/traffic");
 const { response } = require("express");
+
 
 /* 상수 */
 const router = express.Router()
@@ -61,14 +63,21 @@ router.get("/routing", (req, res) => {
     trafficParam = `minLat=${minLati}&minLon=${minLongi}&maxLat=${maxLati}&maxLon=${maxLongi}&zoomLevel=${1}&appKey=${APPKEY}&centerLat=${(maxLati+minLati)/2}&centerLon=${(maxLongi+minLongi)/2}`
     staticParam = `&reqCoordType=WGS84GEO&resCoordType=WGS84GEO&trafficType=AUTO&callback=`
 
-    axiosReq(data).then(returnData => { 
-        if(pass_list.length > 1){
-            data['passList'] = pass_list 
-        }
-        res.send(distance.nodeCheck(returnData.data, srcLati, srcLongti, dstLati, dstLongti))
+
+    trafficReq(trafficParam, staticParam).then( returnData =>{
+        res.send(traffic.trafficSearch(returnData.data))
     }).catch(error => {
         res.send({data : error})
     })
+
+    // axiosReq(data).then(returnData => { 
+    //     if(pass_list.length > 1){
+    //         data['passList'] = pass_list 
+    //     }
+    //     res.send(distance.nodeCheck(returnData.data, srcLati, srcLongti, dstLati, dstLongti))
+    // }).catch(error => {
+    //     res.send({data : error})
+    // })
 });
 
 /* Routing Request */
