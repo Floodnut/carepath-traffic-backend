@@ -104,7 +104,7 @@ exports.nodeCheck = (data, srcLati, srcLongi, dstLati, dstLongi) => {
         }
         return { maxmin : [maxLati, minLati, maxLongi, minLongi], totaldis_count : [totalDistance, nodeCount],validNode};
     }catch(err){
-        return { err }; 
+        return {err}; 
     }
 }
 

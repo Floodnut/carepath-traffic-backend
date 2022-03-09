@@ -9,29 +9,21 @@ const { response } = require("express");
 /* 상수 */
 const router = express.Router()
 const APPKEY = ""
+const host = 'https://apis.openapi.sk.com'
 
-const options = {
-    hostname: 'apis.openapi.sk.com',
-    path: '/tmap/routes/pedestrian?version=1&format=json',
-    method: 'POST',
-    headers: {
-        "Content-Type": "application/json",
-        "appKey" : APPKEY
-    }
-}
+/* HTTP Routing Header */
 const headers = {
     "Content-Type": "application/json",
     "appKey" : APPKEY
 }
 
-
+/* Routing Main */
 router.get("/routing", (req, res) => {
     let srcLati = req.query.srcLati
     let srcLongti = req.query.srcLongti
     let dstLati = req.query.dstLati
     let dstLongti = req.query.dstLongti
     let pass_list = req.query.passList
-    let data
 
     if(typeof(srcLati) == "string"){
         srcLati = parseFloat(srcLati)
@@ -46,34 +38,55 @@ router.get("/routing", (req, res) => {
         dstLongti = parseFloat(dstLongti)
     }
 
-
-    data = {
-        startX : srcLongti,//srcLongti
-        startY : srcLati,//srcLati
-        endX : dstLongti,//dstLongti
-        endY : dstLati,//dstLati
+    let data = {
+        startX : srcLongti,
+        startY : srcLati,
+        endX : dstLongti,
+        endY : dstLati,
         reqCoordType : "WGS84GEO",
         resCoordType : "WGS84GEO",
         startName : "출발지",
         endName : "도착지",
-        passList: pass_list
+        searchOption : 4
     }
 
-    try{
-        axiosReq(data).then(returnData => { 
-            res.send(distance.nodeCheck(returnData.data, srcLati, srcLongti, dstLati,dstLongti))
-        })
-    }catch(err){
-        res.send({data : err})
-    }
+    minLati = srcLati > dstLati ? dstLati : srcLati
+    minLongi = srcLongti > dstLongti ? dstLongti : srcLongti
+    maxLati = srcLati < dstLati ? dstLati : srcLati
+    maxLongi = srcLongti < dstLongti ? dstLongti : srcLongti
+
+    // /* e.g */
+    //minLat=35.230259&minLon=128.647437&maxLat=35.255705&maxLon=128.678507&reqCoordType=WGS84GEO&resCoordType=WGS84GEO
+    //&trafficType=AUTO&zoomLevel=1&appKey=l7xx47ffd778fcc54f49baa6e2ea37859c5d&callback&centerLat=35.239021&centerLon=128.666009
+    trafficParam = `minLat=${minLati}&minLon=${minLongi}&maxLat=${maxLati}&maxLon=${maxLongi}&zoomLevel=${1}&appKey=${APPKEY}&centerLat=${(maxLati+minLati)/2}&centerLon=${(maxLongi+minLongi)/2}`
+    staticParam = `&reqCoordType=WGS84GEO&resCoordType=WGS84GEO&trafficType=AUTO&callback=`
+
+    axiosReq(data).then(returnData => { 
+        if(pass_list.length > 1){
+            data['passList'] = pass_list 
+        }
+        res.send(distance.nodeCheck(returnData.data, srcLati, srcLongti, dstLati, dstLongti))
+    }).catch(error => {
+        res.send({data : error})
+    })
 });
 
+/* Routing Request */
 const axiosReq = async (data) => {
     try{
-        const promise = await axios.post('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json', data, {headers})
+        const promise = await axios.post('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1', data, {headers})
         return promise;
     }catch(err){
-        console.log(err)
+        return err;
+    }
+}
+
+/* Traffic Request */
+const trafficReq = async (trafficParam, staticParam) => {
+    try{
+        const pro = await axios.get(host + '/tmap/traffic?version=1&' + trafficParam + staticParam)
+        return pro;
+    }catch(err){
         return err;
     }
 }

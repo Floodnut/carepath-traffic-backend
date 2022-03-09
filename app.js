@@ -14,4 +14,3 @@ app.get("/routing", routing);
 app.listen(PORT, () => {
     console.log(`Server start at ${HOST}:${PORT}`)
 });
-
