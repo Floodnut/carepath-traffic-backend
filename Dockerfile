@@ -1,4 +1,4 @@
-FROM node:16-alpine3.11
+FROM routing_server:latest
 
 WORKDIR /app
 

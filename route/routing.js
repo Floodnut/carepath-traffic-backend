@@ -7,7 +7,6 @@ const distance = require("../func/distance");
 const traffic = require("../func/traffic");
 const { response } = require("express");
 
-
 /* 상수 */
 const router = express.Router()
 const APPKEY = ""
@@ -25,6 +24,7 @@ router.get("/routing", (req, res) => {
     let srcLongti = req.query.srcLongti
     let dstLati = req.query.dstLati
     let dstLongti = req.query.dstLongti
+    let zoom = req.query.zoom
     let pass_list = req.query.passList
 
     if(typeof(srcLati) == "string"){
@@ -60,24 +60,38 @@ router.get("/routing", (req, res) => {
     // /* e.g */
     //minLat=35.230259&minLon=128.647437&maxLat=35.255705&maxLon=128.678507&reqCoordType=WGS84GEO&resCoordType=WGS84GEO
     //&trafficType=AUTO&zoomLevel=1&appKey=l7xx47ffd778fcc54f49baa6e2ea37859c5d&callback&centerLat=35.239021&centerLon=128.666009
-    trafficParam = `minLat=${minLati}&minLon=${minLongi}&maxLat=${maxLati}&maxLon=${maxLongi}&zoomLevel=${1}&appKey=${APPKEY}&centerLat=${(maxLati+minLati)/2}&centerLon=${(maxLongi+minLongi)/2}`
+    trafficParam = `minLat=${minLati}&minLon=${minLongi}&maxLat=${maxLati}&maxLon=${maxLongi}&zoomLevel=${zoom}&appKey=${APPKEY}&centerLat=${(maxLati+minLati)/2}&centerLon=${(maxLongi+minLongi)/2}`
     staticParam = `&reqCoordType=WGS84GEO&resCoordType=WGS84GEO&trafficType=AUTO&callback=`
 
+    axiosReq(data).then(returnData => { 
+        trafficReq(trafficParam, staticParam).then( trafficData =>{
+            // if(pass_list.length > 1){
+            //     data['passList'] = pass_list 
+            // }
+            resData = distance.nodeCheck(
+                returnData.data, 
+                srcLati, 
+                srcLongti, 
+                dstLati, 
+                dstLongti
+            )
+            //resData["traffic"] = traffic.trafficSearch(trafficData.data)
+            resData["traffic"] = trafficData.data
+            res.send(resData)
 
-    trafficReq(trafficParam, staticParam).then( returnData =>{
-        res.send(traffic.trafficSearch(returnData.data))
+        }).catch(error => {
+            res.send({
+                "error" : "traffic_Error", 
+                data : error
+            })
+        })
+
     }).catch(error => {
-        res.send({data : error})
+        res.send({
+            "error" : "request_Error", 
+            data : error
+        })
     })
-
-    // axiosReq(data).then(returnData => { 
-    //     if(pass_list.length > 1){
-    //         data['passList'] = pass_list 
-    //     }
-    //     res.send(distance.nodeCheck(returnData.data, srcLati, srcLongti, dstLati, dstLongti))
-    // }).catch(error => {
-    //     res.send({data : error})
-    // })
 });
 
 /* Routing Request */
@@ -94,8 +108,10 @@ const axiosReq = async (data) => {
 const trafficReq = async (trafficParam, staticParam) => {
     try{
         const pro = await axios.get(host + '/tmap/traffic?version=1&' + trafficParam + staticParam)
+        console.log(trafficParam)
         return pro;
     }catch(err){
+        console.log(err)
         return err;
     }
 }

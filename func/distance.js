@@ -65,10 +65,7 @@ exports.nodeCheck = (data, srcLati, srcLongi, dstLati, dstLongi) => {
             if (obj["features"][idx]["geometry"]["type"] == "LineString"){
                 for(let idx2 in obj["features"][idx]["geometry"]["coordinates"]){
                     node.push([obj["features"][idx]["geometry"]["coordinates"][idx2][0], obj["features"][idx]["geometry"]["coordinates"][idx2][1]])
-                    
-                    // if(nodeCount > 0){
-                    //     //console.log(getDistance(lastlat, lastlon, obj.features[idx].geometry.coordinates[idx2][1], obj.features[idx].geometry.coordinates[idx2][0]))
-                    // }
+
                     nodeCount += 1;
                     lastlat = obj["features"][idx]["geometry"]["coordinates"][idx2][1]
                     lastlon = obj["features"][idx]["geometry"]["coordinates"][idx2][0]
@@ -95,19 +92,21 @@ exports.nodeCheck = (data, srcLati, srcLongi, dstLati, dstLongi) => {
         var validCount = parseInt(nodeCount / (safeNodeCount + 1))
         var validNode = new Array();
         
-        
         for(let i = 1 ; i < safeNodeCount ; i++){
             var jSon= new Object();
             jSon.lo = node[(i * validCount) - 1][0]
             jSon.la = node[(i * validCount) - 1][1]
             validNode.push(jSon)
         }
-        return { maxmin : [maxLati, minLati, maxLongi, minLongi], totaldis_count : [totalDistance, nodeCount],validNode};
+        return { 
+            maxmin : [maxLati, minLati, maxLongi, minLongi], 
+            totaldis_count : [totalDistance, nodeCount],
+            validNode
+        };
     }catch(err){
-        return {err}; 
+        return { err }; 
     }
 }
-
 
 function getDistance(lat1, lon1, lat2, lon2) {
     const R = 6371e3; // metres

@@ -3,7 +3,7 @@ services:
   app:
     build: .
     container_name: Routing_Server_NodeJS
-    image: node:16-alpine3.11
+    image: routing_server:latest
     ports: 
       - "9001:9001"
     environment:
