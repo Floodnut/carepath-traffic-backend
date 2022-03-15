@@ -25,6 +25,7 @@ router.get("/routing", (req, res) => {
     let dstLati = req.query.dstLati
     let dstLongti = req.query.dstLongti
     let zoom = req.query.zoom
+    let congestion = req.query.congestion
     let pass_list = req.query.passList
 
     if(typeof(srcLati) == "string"){
@@ -65,9 +66,6 @@ router.get("/routing", (req, res) => {
 
     axiosReq(data).then(returnData => { 
         trafficReq(trafficParam, staticParam).then( trafficData =>{
-            // if(pass_list.length > 1){
-            //     data['passList'] = pass_list 
-            // }
             resData = distance.nodeCheck(
                 returnData.data, 
                 srcLati, 
@@ -75,8 +73,8 @@ router.get("/routing", (req, res) => {
                 dstLati, 
                 dstLongti
             )
-            //resData["traffic"] = traffic.trafficSearch(trafficData.data)
-            resData["traffic"] = trafficData.data
+            resData["traffic"] = traffic.trafficSearch(trafficData.data, congestion)
+            // resData["traffic"] = trafficData.data["features"]
             res.send(resData)
 
         }).catch(error => {
@@ -108,10 +106,8 @@ const axiosReq = async (data) => {
 const trafficReq = async (trafficParam, staticParam) => {
     try{
         const pro = await axios.get(host + '/tmap/traffic?version=1&' + trafficParam + staticParam)
-        console.log(trafficParam)
         return pro;
     }catch(err){
-        console.log(err)
         return err;
     }
 }
