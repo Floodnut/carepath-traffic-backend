@@ -1,4 +1,4 @@
-exports.trafficSearch = (data, cong) => {
+exports.tmaptrafficSearch = (data, cong) => {
     try{
         node = {
             total : 0,
@@ -11,10 +11,10 @@ exports.trafficSearch = (data, cong) => {
                     coor : []
                 }
                 for(let coo in data["features"][idx]["geometry"]["coordinates"] ){
-                    tmp["coor"].push(
-                        data["features"][idx]["geometry"]["coordinates"][coo][0],
-                        data["features"][idx]["geometry"]["coordinates"][coo][1]
-                    )
+
+                    let lon = data["features"][idx]["geometry"]["coordinates"][coo][0]
+                    let lat = data["features"][idx]["geometry"]["coordinates"][coo][1]
+                    tmp["coor"].push(lon, lat)
                 }
                 node["trafficData"].push( tmp )
                 //name : data["features"][idx]["properties"]["description"],
