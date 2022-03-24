@@ -46,6 +46,23 @@ const trafficReq = async () => {
     }
 }
 
+const isValid = (a, b, c) =>{
+    let aa = false
+    let bb = false
+    let cc = false
+    if (a.startsWith("414") || a.startsWith("415") || a.startsWith("416") || a.startsWith("417")){
+        aa = true
+    }
+    if (b.startsWith("414") || b.startsWith("415") || b.startsWith("416") || b.startsWith("417")){
+        bb = true
+    }
+    if (c.startsWith("414") || c.startsWith("415") || c.startsWith("416") || c.startsWith("417")){
+        cc = true
+    }
+
+    return aa * bb * cc
+}
+
 app.get("/routing", routing); 
 
 app.listen(PORT, () => {
@@ -88,34 +105,37 @@ app.listen(PORT, () => {
                     let linkId = dt["linkId"]
                     let startNodeId = dt["startNodeId"]
                     let endNodeId = dt["endNodeId"]
-                    if (speed > 50){
+                    if (speed > 50 ){
                         continue
                     }
-                    if(speed <= 50 && speed > 30){
-                        let cong = 2
-                        let query = `insert into traffic(congestion, linkid, tnode, fnode, modified) values(${cong},${linkId},${startNodeId},${endNodeId},now());`
-                        dbCon.query(query, (err, result)=>{
-                            if(err) throw err;
-                        });
-                    }
-                    else if (speed <= 30 && speed > 20){
-                        let cong= 3
-                        let query = `insert into traffic(congestion, linkid, tnode, fnode, modified) values(${cong},${linkId},${startNodeId},${endNodeId},now());`
-                        dbCon.query(query, (err, result)=>{
-                            if(err) throw err;
-                        });
-                    }                    
-                    else if (speed <= 20){
-                        let cong = 4
-                        let query = `insert into traffic(congestion, linkid, tnode, fnode, modified) values(${cong},${linkId},${startNodeId},${endNodeId},now());`
-                        dbCon.query(query, (err, result)=>{
-                            if(err) throw err;
-                        });
+                    if(isValid(linkId, startNodeId, endNodeId)){
+                        if(speed <= 50 && speed > 30){
+                            let cong = 2
+                            let query = `insert into traffic(congestion, linkid, tnode, fnode, modified) values(${cong},${linkId},${startNodeId},${endNodeId},now());`
+                            dbCon.query(query, (err, result)=>{
+                                if(err) throw err;
+                            });
+                        }
+                        else if (speed <= 30 && speed > 20){
+                            let cong= 3
+                            let query = `insert into traffic(congestion, linkid, tnode, fnode, modified) values(${cong},${linkId},${startNodeId},${endNodeId},now());`
+                            dbCon.query(query, (err, result)=>{
+                                if(err) throw err;
+                            });
+                        }                    
+                        else if (speed <= 20){
+                            let cong = 4
+                            let query = `insert into traffic(congestion, linkid, tnode, fnode, modified) values(${cong},${linkId},${startNodeId},${endNodeId},now());`
+                            dbCon.query(query, (err, result)=>{
+                                if(err) throw err;
+                            });
+                        }
                     }      
                 }
+                
             }catch(err){
 
             }
         });
-    },  10 * MINUTE);
+    },  5000);
 })
