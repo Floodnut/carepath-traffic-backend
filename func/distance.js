@@ -8,11 +8,7 @@ exports.nodeCheck = (data, srcLati, srcLongi, dstLati, dstLongi) => {
         let minLati
         let maxLongi
         let minLongi
-        let checkPoint = []
-        let dist = 0.0;
         let nodeCount = 0;
-        let lastlat
-        let lastlon
         
         if(totalDistance <= 300 && totalDistance > 0 ){
             safeNodeCount = 1;

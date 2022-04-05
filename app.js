@@ -15,10 +15,10 @@ const MINUTE = 60 * 1000 ;
 const APPKEY = ""
 const APIKEY = ""
 const dbCon = mysql.createConnection({
-    host: "localhost",
-    user: "",
-    password: "",
-    database: ""
+    host: "10.43.213.77",
+    user: "root",
+    password: "mysql-secret",
+    database: "safepoint"
 })
 
 // const cm_ctLat = 35.18840002173209
@@ -137,5 +137,5 @@ app.listen(PORT, () => {
 
             }
         });
-    },  5000);
+    },  10 * MINUTE);
 })
