@@ -1,4 +1,4 @@
-FROM routing_server:latest
+FROM node:latest
 
 WORKDIR /app
 

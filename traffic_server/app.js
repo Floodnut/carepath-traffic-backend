@@ -4,7 +4,6 @@ const axios = require("axios")
 const mysql = require("mysql")
 
 /* route */
-let routing = require("./route/routing");
 const traffic = require("./func/traffic")
 
 /* 상수 */
@@ -62,8 +61,6 @@ const isValid = (a, b, c) =>{
 
     return aa * bb * cc
 }
-
-app.get("/routing", routing); 
 
 app.listen(PORT, () => {
     console.log(`${new Date} \n-->> Server start on ${HOST}:${PORT}`)

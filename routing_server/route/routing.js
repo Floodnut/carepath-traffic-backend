@@ -4,7 +4,6 @@ const axios = require("axios");
 
 /* func */
 const distance = require("../func/distance");
-const traffic = require("../func/traffic");
 const { response } = require("express");
 
 
@@ -110,16 +109,6 @@ const axiosReq = async (data) => {
     try{
         const promise = await axios.post('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1', data, {headers})
         return promise;
-    }catch(err){
-        return err;
-    }
-}
-
-/* Traffic Request */
-const trafficReq = async (trafficParam, staticParam) => {
-    try{
-        const pro = await axios.get(host + '/tmap/traffic?version=1&' + trafficParam + staticParam)
-        return pro;
     }catch(err){
         return err;
     }

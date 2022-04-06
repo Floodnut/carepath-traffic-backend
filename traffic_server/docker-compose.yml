@@ -1,0 +1,14 @@
+version: "3.0"
+services: 
+  app:
+    build: .
+    container_name: Traffic_Server_NodeJS
+    image: traffic_server:latest
+    ports: 
+      - "9001:9001"
+    environment:
+      NODE_ENV: localhost
+    volumes:
+      - /source:/source
+      - /source/node_modules
+    restart: always

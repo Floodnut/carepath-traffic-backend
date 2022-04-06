@@ -1,0 +1,14 @@
+version: "3.0"
+services: 
+  app:
+    build: .
+    container_name: new_Routing_Server_NodeJS
+    image: routing_server:latest
+    ports: 
+      - "9002:9002"
+    environment:
+      NODE_ENV: localhost
+    volumes:
+      - /source:/source
+      - /source/node_modules
+    restart: always
