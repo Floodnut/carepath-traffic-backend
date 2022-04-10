@@ -2,6 +2,7 @@
 const express = require("express");
 const axios = require("axios")
 const mysql = require("mysql")
+const schedule = require('node-schedule');
 
 /* route */
 const traffic = require("./func/traffic")
@@ -65,38 +66,19 @@ const isValid = (a, b, c) =>{
 app.listen(PORT, () => {
     console.log(`${new Date} \n-->> Server start on ${HOST}:${PORT}`)
 
-    setInterval(() => {
-        tmaptrafficReq(cm_ctLat, cm_ctLon).then( trafficData =>{
-           let tr = traffic.tmaptrafficSearch(trafficData.data, 2)
-            try{
-                dbCon.query('delete from tmaptraffic;', (err, result)=>{
-                    if(err) throw err;
-                });
-
-                for(let idx in tr["trafficData"]){
-                    for(let j = 0 ; j < tr["trafficData"][idx]["coor"].length; j += 2){
-                        let cong = tr["trafficData"][idx]["congestion"]
-                        let lt =  tr["trafficData"][idx]["coor"][j+1]
-                        let lon = tr["trafficData"][idx]["coor"][j] 
-                        let query = `insert into tmaptraffic(congestion, lat, lon, modified) values(${cong},${lt},${lon},now());`
-                        dbCon.query(query, (err, result)=>{
-                            if(err) throw err;
-                        });
-                    }
-                }
-            }catch(err){
-
-            }
-        });
-        
+    schedule.scheduleJob('* * 18-6 * *', setInterval(() => {
         trafficReq().then( trafficData =>{
             try{
                 let tr = trafficData.data
                 dbCon.query('delete from traffic;', (err, result)=>{
                     if(err) throw err;
                 });
+                dbCon.query('ALTER TABLE traffic AUTO_INCREMENT = 0;', (err, result)=>{
+                    if(err) throw err;
+                });
 
                 for(let idx in tr["body"]["items"]){
+                    
                     let dt = tr["body"]["items"][idx]
                     let speed = dt["speed"]
                     let linkId = dt["linkId"]
@@ -129,9 +111,37 @@ app.listen(PORT, () => {
                         }
                     }      
                 }
-                
             }catch(err){
+                console.log(err)
+            }
+        });
+    }, 25 * MINUTE));
 
+    setInterval(() => {
+        tmaptrafficReq(cm_ctLat, cm_ctLon).then( trafficData =>{
+           let tr = traffic.tmaptrafficSearch(trafficData.data, 2)
+            try{
+                dbCon.query('delete from tmaptraffic;', (err, result)=>{
+                    if(err) throw err;
+                });
+                dbCon.query('ALTER TABLE tmaptraffic AUTO_INCREMENT = 0;', (err, result)=>{
+                    if(err) throw err;
+                });
+
+                for(let idx in tr["trafficData"]){
+                    
+                    for(let j = 0 ; j < tr["trafficData"][idx]["coor"].length; j += 2){
+                        let cong = tr["trafficData"][idx]["congestion"]
+                        let lt =  tr["trafficData"][idx]["coor"][j+1]
+                        let lon = tr["trafficData"][idx]["coor"][j] 
+                        let query = `insert into tmaptraffic(congestion, lat, lon, modified) values(${cong},${lt},${lon},now());`
+                        dbCon.query(query, (err, result)=>{
+                            if(err) throw err;
+                        });
+                    }
+                }
+            }catch(err){
+                console.log(err)
             }
         });
     },  10 * MINUTE);
