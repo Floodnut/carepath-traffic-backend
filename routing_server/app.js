@@ -6,8 +6,8 @@ let routing = require("./route/routing");
 
 /* 상수 */
 const app = express();
-const PORT = 9002;
-const HOST = '0.0.0.0';
+const PORT = process.env.PORT;
+const HOST = process.env.HOST;
 
 app.get("/routing", routing); 
 

@@ -9,7 +9,7 @@ const { response } = require("express");
 
 /* 상수 */
 const router = express.Router()
-const APPKEY = ""
+const APPKEY = process.env.APPKEY
 const host = 'https://apis.openapi.sk.com'
 
 /* HTTP Routing Header */

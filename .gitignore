@@ -136,3 +136,4 @@ dist
 keys.json
 *.txt
 *.sh
+.env

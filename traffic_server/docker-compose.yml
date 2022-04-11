@@ -4,10 +4,20 @@ services:
     build: .
     container_name: Traffic_Server_NodeJS
     image: traffic_server:latest
+    env_file:
+     - ./.env
     ports: 
-      - "9001:9001"
+      - "${PORT}:${PORT}"
     environment:
       NODE_ENV: localhost
+      PORT: ${PORT}
+      HOST: ${HOST}
+      APPKEY: ${APPKEY}
+      APIKEY: ${APIKEY}
+      DBHOST: ${DBHOST}
+      DBUSER: ${DBUSER}
+      DBPW: ${DBPW}
+      DB: ${DB}
     volumes:
       - /source:/source
       - /source/node_modules

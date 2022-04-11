@@ -4,10 +4,16 @@ services:
     build: .
     container_name: new_Routing_Server_NodeJS
     image: routing_server:latest
+    env_file:
+     - ./.env
     ports: 
-      - "9002:9002"
+      - "${PORT}:${PORT}"
     environment:
       NODE_ENV: localhost
+      PORT: ${PORT}
+      HOST: ${HOST}
+      APPKEY: ${APPKEY}
+      APIHOST: ${APIHOST}
     volumes:
       - /source:/source
       - /source/node_modules
