@@ -77,25 +77,6 @@ router.get("/routing", (req, res) => {
 
         res.send(resData)
 
-        // trafficReq(trafficParam, staticParam).then( trafficData =>{
-        //     resData = distance.nodeCheck(
-        //         returnData.data, 
-        //         srcLati, 
-        //         srcLongti, 
-        //         dstLati, 
-        //         dstLongti
-        //     )
-        //     resData["traffic"] = traffic.trafficSearch(trafficData.data, congestion)
-        //     // resData["traffic"] = trafficData.data["features"]
-        //     res.send(resData)
-
-        // }).catch(error => {
-        //     res.send({
-        //         "error" : "traffic_Error", 
-        //         data : error
-        //     })
-        // })
-
     }).catch(error => {
         res.send({
             "error" : "request_Error", 

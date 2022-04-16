@@ -137,3 +137,4 @@ keys.json
 *.txt
 *.sh
 .env
+test.html

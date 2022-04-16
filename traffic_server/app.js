@@ -69,10 +69,7 @@ app.listen(PORT, () => {
         tmaptrafficReq(cm_ctLat, cm_ctLon).then( trafficData =>{
            let tr = traffic.tmaptrafficSearch(trafficData.data, 2)
             try{
-                dbCon.query('delete from tmaptraffic;', (err, result)=>{
-                    if(err) throw err;
-                });
-                dbCon.query('ALTER TABLE tmaptraffic AUTO_INCREMENT = 0;', (err, result)=>{
+                dbCon.query('truncate table tmaptraffic;', (err, result)=>{
                     if(err) throw err;
                 });
 
@@ -96,10 +93,7 @@ app.listen(PORT, () => {
         trafficReq().then( trafficData =>{
             try{
                 let tr = trafficData.data
-                dbCon.query('delete from traffic;', (err, result)=>{
-                    if(err) throw err;
-                });
-                dbCon.query('ALTER TABLE traffic AUTO_INCREMENT = 0;', (err, result)=>{
+                dbCon.query('truncate table traffic;', (err, result)=>{
                     if(err) throw err;
                 });
 
