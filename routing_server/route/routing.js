@@ -59,13 +59,6 @@ router.get("/routing", (req, res) => {
     maxLati = srcLati < dstLati ? dstLati : srcLati
     maxLongi = srcLongti < dstLongti ? dstLongti : srcLongti
 
-    // /* e.g */
-    //minLat=35.230259&minLon=128.647437&maxLat=35.255705&maxLon=128.678507&reqCoordType=WGS84GEO&resCoordType=WGS84GEO
-    //&trafficType=AUTO&zoomLevel=1&appKey=l7xx47ffd778fcc54f49baa6e2ea37859c5d&callback&centerLat=35.239021&centerLon=128.666009
-
-    trafficParam = `minLat=${minLati}&minLon=${minLongi}&maxLat=${maxLati}&maxLon=${maxLongi}&zoomLevel=${zoom}&appKey=${APPKEY}&centerLat=${(maxLati+minLati)/2}&centerLon=${(maxLongi+minLongi)/2}`
-    staticParam = `&reqCoordType=WGS84GEO&resCoordType=WGS84GEO&trafficType=AUTO&callback=`
-
     axiosReq(data).then(returnData => { 
         resData = distance.nodeCheck(
             returnData.data, 

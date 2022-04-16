@@ -136,28 +136,20 @@ exports.nodeCheck = (data, srcLati, srcLongi, dstLati, dstLongi) => {
         }];
 
         /* 경유지 기준 노드 찾기 */
-        let validNodeList = searchStdNode(node, safeNodeCount, acc);
-        for(let vIdx = 0 ; vIdx < validNodeList.length; vIdx++){
+        for(let vIdx = 0 ; vIdx < node.length; vIdx++){
             validNode.push({
                 idx : vIdx + 1,
-                lo  : validNodeList[vIdx][1],
-                la  : validNodeList[vIdx][2],
-                di  : validNodeList[vIdx][4]
+                lo  : node[vIdx][1],
+                la  : node[vIdx][2],
+                di  : node[vIdx][3]
             })
         }   
-
-        /* 목적지 */
-        validNode.push({ 
-            idx : safeNodeCount, 
-            lo : dstLongi, 
-            la : dstLati, 
-            di : Math.round(acc)
-        });
 
         return { 
             maxmin : [maxLati, minLati, maxLongi, minLongi], /* 거쳐가는 좌표 중 위도, 경도의 최대 값 */
             totaldis_count : [totalDistance, nodeCount], /* 총 이동 거리, 총 거쳐가는 노드 수 */
             validNode, /* 기준 노드 */
+            validNodeList : searchStdNode(node, safeNodeCount, acc)
         };
 
     }catch(err){
@@ -186,7 +178,7 @@ const searchStdNode = (nodeArr, pointCnt, totalDistance) => {
     const std = parseInt(nodeArr.length / (pointCnt - 1));
     let result = [];
 
-    for(let idx = std; idx < nodeArr.length ; idx+=std){
+    for(let idx = std; idx < nodeArr.length ; idx += std){
         if (result.length == pointCnt - 1){
             break;
         }
@@ -202,7 +194,7 @@ const searchStdNode = (nodeArr, pointCnt, totalDistance) => {
                 idx += 1;
             }
         }
-        result.push(nodeArr[idx])
+        result.push(idx)
     }
     return result;
 }
