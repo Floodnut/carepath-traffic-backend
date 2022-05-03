@@ -8,9 +8,9 @@ const traffic = require("./func/traffic")
 
 /* 상수 */
 const app = express();
+const MINUTE = 60 * 1000 ;
 const PORT = process.env.PORT
 const HOST = process.env.HOST
-const MINUTE = 60 * 1000 ;
 const APPKEY = process.env.APPKEY
 const APIKEY = process.env.APIKEY
 const dbCon = mysql.createConnection({
@@ -78,8 +78,10 @@ app.listen(PORT, () => {
                     for(let j = 0 ; j < tr["trafficData"][idx]["coor"].length; j += 2){
                         let cong = tr["trafficData"][idx]["congestion"]
                         let lt =  tr["trafficData"][idx]["coor"][j+1]
-                        let lon = tr["trafficData"][idx]["coor"][j] 
-                        let query = `insert into tmaptraffic(congestion, lat, lon, modified) values(${cong},${lt},${lon},now());`
+                        let lon = tr["trafficData"][idx]["coor"][j]
+                        let road = tr["trafficData"][idx]["road"]
+                        let roadType = tr["trafficData"][idx]["roadType"]
+                        let query = `insert into tmaptraffic(congestion, lat, lon, road, roadtype, modified) values(${cong},${lt},${lon},\"${road}\",${roadType},now());`
                         dbCon.query(query, (err, result)=>{
                             if(err) throw err;
                         });
@@ -104,27 +106,35 @@ app.listen(PORT, () => {
                     let linkId = dt["linkId"]
                     let startNodeId = dt["startNodeId"]
                     let endNodeId = dt["endNodeId"]
-                    if (speed > 50 ){
-                        continue
+                    let road = dt["roadName"]
+                    
+                    if (speed > 50 || road.includes("국도") || road.includes("고속") || road.length == 0){
+                        continue;
                     }
+
+                    let roadType = (road.includes("대로") ? 1 : (road.includes("길") ? 3 : 2))
+
                     if(isValid(linkId, startNodeId, endNodeId)){
                         if(speed <= 50 && speed > 30){
                             let cong = 2
-                            let query = `insert into traffic(congestion, linkid, tnode, fnode, modified) values(${cong},${linkId},${startNodeId},${endNodeId},now());`
+                            let query = `insert into traffic(congestion, linkid, tnode, fnode, road, roadtype, modified) values(${cong},${linkId},${startNodeId},${endNodeId},\"${road}\",${roadType},now());`
+                            
                             dbCon.query(query, (err, result)=>{
                                 if(err) throw err;
                             });
                         }
                         else if (speed <= 30 && speed > 20){
                             let cong= 3
-                            let query = `insert into traffic(congestion, linkid, tnode, fnode, modified) values(${cong},${linkId},${startNodeId},${endNodeId},now());`
+                            let query = `insert into traffic(congestion, linkid, tnode, fnode, road, roadtype, modified) values(${cong},${linkId},${startNodeId},${endNodeId},\"${road}\",${roadType},now());`
+
                             dbCon.query(query, (err, result)=>{
                                 if(err) throw err;
                             });
                         }                    
                         else if (speed <= 20){
                             let cong = 4
-                            let query = `insert into traffic(congestion, linkid, tnode, fnode, modified) values(${cong},${linkId},${startNodeId},${endNodeId},now());`
+                            let query = `insert into traffic(congestion, linkid, tnode, fnode, road, roadtype, modified) values(${cong},${linkId},${startNodeId},${endNodeId},\"${road}\",${roadType},now());`
+                            
                             dbCon.query(query, (err, result)=>{
                                 if(err) throw err;
                             });
