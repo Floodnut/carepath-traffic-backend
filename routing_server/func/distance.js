@@ -187,15 +187,15 @@ const searchStdNode = (nodeArr, pointCnt, totalDistance) => {
             while ((nodeArr[idx][4] - nodeArr[before][4]) > (totalDistance / pointCnt)){
                 idx -= 1;
             }
-             
         }
         else{
             while ((nodeArr[idx][4] - nodeArr[before][4]) <= (totalDistance / pointCnt)){
                 idx += 1;
             }
         }
-        result.push(idx)
+        result.push(idx);
     }
+    result.push(nodeArr.length);
     return result;
 }
 

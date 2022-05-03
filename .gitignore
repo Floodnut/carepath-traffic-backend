@@ -130,11 +130,12 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-
-
 # keys
 keys.json
 *.txt
 *.sh
 .env
 test.html
+routing_server/node_modules/*.*
+traffic_server/node_modules/*.*
+node_modules/*
