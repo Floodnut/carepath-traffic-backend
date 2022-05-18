@@ -18,27 +18,19 @@ exports.nodeCheck = (data, srcLati, srcLongi, dstLati, dstLongi) => {
         if(totalDistance <= 300 && totalDistance > 0 ){
             safeNodeCount = 1;
         }
-        else if(totalDistance <= 500 && totalDistance > 300 ){
+        else if(totalDistance <= 1200 && totalDistance > 300 ){
             safeNodeCount = 2;
-        }
-        else if (totalDistance <= 1000 && totalDistance > 500 ){
+        }  
+        else if (totalDistance <= 2500 && totalDistance > 1200 ){
             safeNodeCount = 3;
+        }
+        else if (totalDistance <= 4000 && totalDistance > 2500 ){
+            safeNodeCount = 4;
         }    
-        else if (totalDistance <= 5000 && totalDistance > 1000 ){
+        else if (totalDistance <= 15000 && totalDistance > 4000 ){
             safeNodeCount = 5;
         }    
-        else if (totalDistance <= 10000 && (totalDistance/10) < 700 ){
-            safeNodeCount = 6;
-        }
-        else if (totalDistance <= 10000 && (totalDistance/10) < 1000 ){
-            safeNodeCount = 8;
-        }
-        else if (totalDistance <= 15000 && (totalDistance/15) < 700 ){
-            safeNodeCount = 10;
-        }    
-        else if (totalDistance <= 15000 && (totalDistance/15) < 1000 ){
-            safeNodeCount = 15;
-        }else if(totalDistance > 15000){
+        else if(totalDistance > 15000){
             return { error : "Distance Too Long.", Distance: totalDistance}
         }
         else{
